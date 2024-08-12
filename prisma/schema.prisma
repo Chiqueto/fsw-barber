@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid()) //falo que na minha tabela User vai ter um id do tipo String @id = pk @default(o padrão vai ser uuid() -> vai ser um id aleatorio)
+  email     String
+  name      String
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  //@unique -> não pode se repetir
+  //? -> campo não é obrigatório
+}
+
+model Barbershop {
+  id          String              @id @default(uuid())
+  name        String
+  address     String
+  phones      String[]
+  description String
+  imageUrl    String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  services    BarbershopService[]
+}
+
+model BarbershopService {
+  id           String     @id @default(uuid())
+  name         String
+  description  String
+  imageUrl     String
+  price        Decimal    @db.Decimal(10, 2) //Decimal = número real @db.Decimal() -> define quantas casas vai ter antes da vírgula e quantas depois, nesse caso 10 antes e 2 depois
+  barbershopId String //id da barbearia
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id]) //estou criando a relação entre essas tabelas, relacionando o barbershopID da tabela BarbershopService com o id da tabela Barbershop
+  bookings     Booking[]
+}
+
+model Booking {
+  id        String            @id @default(uuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  serviceId String
+  service   BarbershopService @relation(fields: [serviceId], references: [id])
+  date      DateTime
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
