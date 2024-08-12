@@ -1,7 +1,7 @@
 # Aula zero
 
 - [x] setup do banco
-- [] Seeding do banco (colocar dados)
+- [x] Seeding do banco (colocar dados)
 - [] introdução ao next.js
 - [] Taailwind e Shadcn
 - [] Gir hooks
