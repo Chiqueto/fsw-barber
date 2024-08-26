@@ -1,24 +1,25 @@
-import { SearchIcon } from "lucide-react";
-import Header from "./_components/header";
-import { Button } from "./_components/ui/button";
-import { Input } from "./_components/ui/input";
-import Image from "next/image";
-import { Card, CardContent } from "./_components/ui/card";
-import { Avatar, AvatarImage } from "./_components/ui/avatar";
-import { Badge } from "./_components/ui/badge";
-import { db } from "./_lib/prisma";
-import BarbershopItem from "./_components/BarberhopItem";
+import { SearchIcon } from "lucide-react"
+import Header from "./_components/header"
+import { Button } from "./_components/ui/button"
+import { Input } from "./_components/ui/input"
+import Image from "next/image"
+import { Card, CardContent } from "./_components/ui/card"
+import { Avatar, AvatarImage } from "./_components/ui/avatar"
+import { Badge } from "./_components/ui/badge"
+import { db } from "./_lib/prisma"
+import BarbershopItem from "./_components/BarberhopItem"
+import { quickSearchOptions } from "./_constants/search"
 
 export default async function Home() {
   // Chamar meu banco de dados
-  const barbershops = await db.barbershop.findMany();
+  const barbershops = await db.barbershop.findMany()
   const popularBarbershops = await db.barbershop.findMany({
     orderBy: {
       name: "desc",
     },
-  });
+  })
 
-  console.log(barbershops);
+  console.log(barbershops)
   return (
     <div>
       {/* Header */}
@@ -28,13 +29,27 @@ export default async function Home() {
         <p>Segunda-feira 05 de agosto.</p>
 
         {/* BUSCA */}
-        <div className="flex items-center gap-2 mt-6">
+        <div className="mt-6 flex items-center gap-2">
           <Input placeholder="Faça sua busca..." />
           <Button>
             <SearchIcon />
           </Button>
         </div>
 
+        {/* Busca Rápida */}
+        <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {quickSearchOptions.map((option) => (
+            <Button className="gap-2" variant={"secondary"} key={option.title}>
+              <Image
+                src={option.imageUrl}
+                alt={option.title}
+                width={16}
+                height={16}
+              />
+              {option.title}
+            </Button>
+          ))}
+        </div>
         {/* Imagem */}
         <div className="relative mt-6 h-[150px] w-full">
           <Image
@@ -46,7 +61,7 @@ export default async function Home() {
         </div>
 
         {/* AGENDAMENTO */}
-        <h2 className=" mt-6 mb-3 uppercase text-gray-400 font-bold text-xs">
+        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
           Agendamentos
         </h2>
 
@@ -65,7 +80,7 @@ export default async function Home() {
               </div>
             </div>
             {/* DIREITA */}
-            <div className="flex flex-col items-center justify-center px-5 border-l-2 border-solid">
+            <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
               <p className="text-sm">Agosto</p>
               <p className="text-2xl">05</p>
               <p className="text-sm">20:00</p>
@@ -73,7 +88,7 @@ export default async function Home() {
           </CardContent>
         </Card>
 
-        <h2 className=" mt-6 mb-3 uppercase text-gray-400 font-bold text-xs">
+        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
           Recomendados
         </h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
@@ -82,7 +97,7 @@ export default async function Home() {
           ))}
         </div>
 
-        <h2 className=" mt-6 mb-3 uppercase text-gray-400 font-bold text-xs">
+        <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
           Populares
         </h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
@@ -93,7 +108,7 @@ export default async function Home() {
       </div>
       <footer>
         <Card>
-          <CardContent className="py-6 px-5">
+          <CardContent className="px-5 py-6">
             <p className="text-sm text-gray-400">
               © 2023 Copyright <span className="font-bold">FSW Barber</span>
             </p>
@@ -101,5 +116,5 @@ export default async function Home() {
         </Card>
       </footer>
     </div>
-  );
+  )
 }
