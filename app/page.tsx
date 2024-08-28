@@ -7,7 +7,7 @@ import { Card, CardContent } from "./_components/ui/card"
 import { db } from "./_lib/prisma"
 import BarbershopItem from "./_components/BarberhopItem"
 import { quickSearchOptions } from "./_constants/search"
-import BookingItem from "./_components/booking-item"
+import BookingItem from "./_components/Booking-item"
 
 export default async function Home() {
   // Chamar meu banco de dados
