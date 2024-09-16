@@ -14,15 +14,58 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid()) //falo que na minha tabela User vai ter um id do tipo String @id = pk @default(o padrão vai ser uuid() -> vai ser um id aleatorio)
-  email     String
-  name      String
-  bookings  Booking[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String    @id @default(cuid()) //falo que na minha tabela User vai ter um id do tipo String @id = pk @default(o padrão vai ser uuid() -> vai ser um id aleatorio)
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  bookings      Booking[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   //@unique -> não pode se repetir
   //? -> campo não é obrigatório
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }
 
 model Barbershop {
@@ -58,3 +101,5 @@ model Booking {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 }
+
+//Migration = mudar o estado do seu banco de dados
