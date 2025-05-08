@@ -6,7 +6,9 @@ import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -14,7 +16,10 @@ import {
 import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useState } from "react"
-import { format } from "date-fns"
+import { format, set } from "date-fns"
+import { createBooking } from "../_actions/create-booking"
+// import { useSession } from "next-auth/react"
+import { toast } from "sonner"
 interface ServiceItemProps {
   service: BarbershopService
   barbershop: Pick<Barbershop, "name">
@@ -48,7 +53,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     "17:30",
     "18:00",
   ]
-
+  // const { data } = useSession()
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<String | undefined>(
     undefined,
@@ -60,6 +65,29 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
   const handleSelectedTime = (time: String) => {
     setSelectedTime(time)
+  }
+
+  const handleCreateBooking = async () => {
+    try {
+      if (!selectedDay || !selectedTime) return
+
+      const hour = selectedTime?.split(":")[0]
+      const minute = selectedTime?.split(":")[1]
+      const newDate = set(selectedDay, {
+        minutes: Number(minute),
+        hours: Number(hour),
+      })
+
+      await createBooking({
+        serviceId: service.id,
+        userId: "cmafe1x0x0000kf6ah6zig7nq",
+        date: newDate,
+      })
+      toast.success("Reserva criada com sucesso")
+    } catch (error) {
+      console.log(error)
+      toast.error("Erro ao criar reserva")
+    }
   }
 
   return (
@@ -94,7 +122,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
               </SheetTrigger>
               <SheetContent className="px-0">
                 <SheetHeader>
-                  <SheetTitle>FazerReserva</SheetTitle>
+                  <SheetTitle>Fazer Reserva</SheetTitle>
                 </SheetHeader>
                 <div className="border-b border-solid py-5">
                   <Calendar
@@ -129,7 +157,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                 )}
 
                 {selectedTime && selectedDay && (
-                  <div className="PY-5">
+                  <div className="p-5">
                     {" "}
                     <Card>
                       <CardContent className="p-3">
@@ -170,6 +198,13 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                     </Card>
                   </div>
                 )}
+                <SheetFooter className="px-5">
+                  <SheetClose asChild>
+                    <Button type="submit" onClick={handleCreateBooking}>
+                      Confirmar
+                    </Button>
+                  </SheetClose>
+                </SheetFooter>
               </SheetContent>
             </Sheet>
           </div>
