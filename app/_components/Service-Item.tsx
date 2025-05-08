@@ -18,7 +18,7 @@ import { ptBR } from "date-fns/locale"
 import { useState } from "react"
 import { format, set } from "date-fns"
 import { createBooking } from "../_actions/create-booking"
-// import { useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 interface ServiceItemProps {
   service: BarbershopService
@@ -53,7 +53,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     "17:30",
     "18:00",
   ]
-  // const { data } = useSession()
+  const { data } = useSession()
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<String | undefined>(
     undefined,
@@ -80,7 +80,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
       await createBooking({
         serviceId: service.id,
-        userId: "cmafe1x0x0000kf6ah6zig7nq",
+        userId: (data?.user as any).id,
         date: newDate,
       })
       toast.success("Reserva criada com sucesso")
@@ -198,9 +198,13 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                     </Card>
                   </div>
                 )}
-                <SheetFooter className="px-5">
+                <SheetFooter className="mt-5 px-5">
                   <SheetClose asChild>
-                    <Button type="submit" onClick={handleCreateBooking}>
+                    <Button
+                      type="submit"
+                      onClick={handleCreateBooking}
+                      disabled={!selectedTime || !selectedDay}
+                    >
                       Confirmar
                     </Button>
                   </SheetClose>
